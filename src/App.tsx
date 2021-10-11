@@ -1,16 +1,19 @@
 import { StoreProvider } from "easy-peasy";
 import React, { useState } from "react";
 import { Pressable, SafeAreaView, StyleSheet, Text } from "react-native";
+import {
+	HighlightableElement,
+	HighlightableElementProvider,
+	HighlightOverlay,
+} from "react-native-highlight-overlay";
 
-import FocusOverlay from "./FocusOverlay";
-import FocusableElement from "./FocusOverlay/FocusableElement";
 import store from "./libs/state/store";
 
-const FOCUSED_KEY_1 = "focused1";
-const FOCUSED_KEY_2 = "focused2";
+export const FOCUSED_KEY_1 = "focused1";
+export const FOCUSED_KEY_2 = "focused2";
 
 function App() {
-	const [focusedId, setFocusKey] = useState<string | null>(null);
+	const [focusedId, setHighlightKey] = useState<string | null>(null);
 
 	function T1() {
 		return (
@@ -22,7 +25,7 @@ function App() {
 					marginBottom: 10,
 				}}
 				onPress={() => {
-					setFocusKey(FOCUSED_KEY_2);
+					setHighlightKey(FOCUSED_KEY_2);
 				}}
 			>
 				<Text style={{ color: "black" }}>Switch focus to orange button</Text>
@@ -40,7 +43,7 @@ function App() {
 					marginBottom: 10,
 				}}
 				onPress={() => {
-					setFocusKey(FOCUSED_KEY_1);
+					setHighlightKey(FOCUSED_KEY_1);
 				}}
 			>
 				<Text style={{ color: "black" }}>Switch focus to cyan button</Text>
@@ -49,20 +52,15 @@ function App() {
 	}
 
 	return (
-		<StoreProvider store={store}>
-			<FocusOverlay
-				focusedElementId={focusedId}
-				onDismiss={() => {
-					setFocusKey(null);
-				}}
-			>
+		<HighlightableElementProvider>
+			<StoreProvider store={store}>
 				<SafeAreaView style={styles.container}>
-					<FocusableElement id={FOCUSED_KEY_1}>
+					<HighlightableElement id={FOCUSED_KEY_1}>
 						<T1 />
-					</FocusableElement>
-					<FocusableElement id={FOCUSED_KEY_2}>
+					</HighlightableElement>
+					<HighlightableElement id={FOCUSED_KEY_2}>
 						<T2 />
-					</FocusableElement>
+					</HighlightableElement>
 					<Pressable
 						style={{
 							backgroundColor: "blue",
@@ -71,14 +69,20 @@ function App() {
 							marginBottom: 10,
 						}}
 						onPress={() => {
-							setFocusKey("blash");
+							setHighlightKey("blash");
 						}}
 					>
 						<Text style={{ color: "white" }}>Turn off</Text>
 					</Pressable>
 				</SafeAreaView>
-			</FocusOverlay>
-		</StoreProvider>
+				<HighlightOverlay
+					focusedElementId={focusedId}
+					onDismiss={() => {
+						setHighlightKey(null);
+					}}
+				/>
+			</StoreProvider>
+		</HighlightableElementProvider>
 	);
 }
 
